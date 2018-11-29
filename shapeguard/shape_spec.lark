@@ -1,0 +1,42 @@
+// Copyright 2018 Google LLC
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+// https://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+start: dim ("," dim)*
+
+?dim: sum
+    | wildcard
+    | ellipsis
+    | dynamic
+
+?sum: product
+    | sum "+" product       -> add
+    | sum "-" product       -> sub
+
+?product: item
+        | product "*" item  -> mul
+        | product "/" item  -> div
+
+?item: INT                  -> number
+     | CNAME                -> name
+     | CNAME "?"            -> dynamic_name
+     | "(" sum ")"
+
+wildcard: "*"
+ellipsis: "..."
+dynamic: "?"
+
+%import common.INT
+%import common.WS
+%import common.CNAME
+%ignore WS
