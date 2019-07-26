@@ -14,15 +14,20 @@
 
 """Defines the ShapeSpec object which represents a parsed shape template."""
 
+from typing import List, Union, Dict, Optional, Tuple
+
 from shapeguard import dim_specs
 from shapeguard import exception
 from shapeguard import shape_spec_parser
 
+EntriesType = List[Union[shape_spec_parser.Token, dim_specs.DimSpec]]
+ShapeType = Union[Tuple[int], List[int]]
 
-class ShapeSpec(object):
 
-    def __init__(self, entries):
-        super(ShapeSpec, self).__init__()
+class ShapeSpec:
+
+    def __init__(self, entries: EntriesType):
+        super().__init__()
         self.entries = [x for x in entries
                         if not isinstance(x, shape_spec_parser.Token)]
         if dim_specs.ellipsis_dim in self.entries:
@@ -35,24 +40,29 @@ class ShapeSpec(object):
             self.right_entries = []
             self.has_ellipsis = False
 
-    def evaluate(self, known_dims=()):
+    def evaluate(self,
+                 known_dims: Dict[str, int] = None) -> List[Optional[int]]:
+        known_dims = known_dims or {}
+
         if self.has_ellipsis:
             raise exception.UnderspecifiedShapeError(
                 "Template with an ellipsis (...) cannot be fully evaluated.")
         else:
             return [x.evaluate(known_dims) for x in self.entries]
 
-    def partial_evaluate(self, known_dims=None):
+    def partial_evaluate(self,
+                         known_dims: Dict[str, int] = None
+                         ) -> List[Union[int, str, None]]:
         known_dims = known_dims or {}
-        eshape = []
+        eval_shape: List[Union[int, str, None]] = []
         for x in self.entries:
             try:
-                eshape.append(x.evaluate(known_dims))
+                eval_shape.append(x.evaluate(known_dims))
             except exception.UnderspecifiedShapeError:
-                eshape.append(x)
-        return eshape
+                eval_shape.append(repr(x))
+        return eval_shape
 
-    def rank_matches(self, shape):
+    def rank_matches(self, shape: ShapeType) -> bool:
         if self.has_ellipsis:
             if len(shape) < len(self.entries) - 1:
                 return False
@@ -61,14 +71,15 @@ class ShapeSpec(object):
                 return False
         return True
 
-    def matches(self, shape, known_dims=()):
+    def matches(self, shape, known_dims: Dict[str, int] = None) -> bool:
+        known_dims = known_dims or {}
         rank_matches = self.rank_matches(shape)
         conflicts = any([x.has_conflict(s, known_dims)
                          for s, x in self.zip_iter(shape)])
 
         return rank_matches and not conflicts
 
-    def zip_iter(self, shape):
+    def zip_iter(self, shape: ShapeType):
         for s, e in zip(shape, self.left_entries):
             yield s, e
         if self.right_entries:
@@ -76,11 +87,13 @@ class ShapeSpec(object):
                             self.right_entries):
                 yield s, e
 
-    def infer(self, shape, known_dims=()):
+    def infer(self,
+              shape: ShapeType,
+              known_dims: Dict[str, int] = None) -> Dict[str, int]:
         current_known = {}
         if known_dims:
             current_known.update(known_dims)
-        inferred = True
+        inferred = {'Start': True}
         while inferred:
             inferred = {}
             for s, x in self.zip_iter(shape):
@@ -88,8 +101,8 @@ class ShapeSpec(object):
             current_known.update(inferred)
         return current_known
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return "<{}>".format(self.entries)
 
-    def __len__(self):
+    def __len__(self) -> int:
         return len(self.entries)

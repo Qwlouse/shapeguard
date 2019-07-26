@@ -31,7 +31,6 @@ assert sg['H, W*C+1'] == [32, 97]
 
 # attribute access to inferred dimensions
 assert sg.B == 64
-
 ```
 
 
@@ -51,4 +50,3 @@ The shape template mini-DSL supports many different ways of specifying shapes:
 This is not an officially supported Google product.
 
 ---
-

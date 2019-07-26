@@ -15,35 +15,36 @@
 """Contains the main ShapeGuard class."""
 
 from copy import copy
+from typing import Optional, Dict, Any
 
 from shapeguard import tools
 
 
-class ShapeGuard(object):
+class ShapeGuard:
 
-    def __init__(self, dims=None):
+    def __init__(self, dims: Optional[Dict[str, int]] = None):
         object.__setattr__(self, 'dims', {} if dims is None else dims)
 
-    def matches(self, tensor, template):
+    def matches(self, tensor, template: str) -> bool:
         return tools.matches(tensor, template, self.dims)
 
-    def guard(self, tensor, template):
+    def guard(self, tensor, template: str):
         inferred_dims = tools.guard(tensor, template, self.dims)
         self.dims.update(inferred_dims)
         return tensor
 
-    def reshape(self, tensor, template):
+    def reshape(self, tensor, template: str):
         return tools.reshape(tensor, template, self.dims)
 
-    def evaluate(self, template, **kwargs):
+    def evaluate(self, template: str, **kwargs) -> Optional[int]:
         local_dims = copy(self.dims)
         local_dims.update(kwargs)
         return tools.evaluate(template, local_dims)
 
-    def __getitem__(self, item):
+    def __getitem__(self, item: str) -> Optional[int]:
         return tools.evaluate(item, self.dims)
 
-    def __getattr__(self, item):
+    def __getattr__(self, item: str) -> Any:
         try:
             # Throws exception if not in prototype chain
             return object.__getattribute__(self, item)
@@ -53,7 +54,7 @@ class ShapeGuard(object):
             except KeyError:
                 raise AttributeError(item)
 
-    def __setattr__(self, key, value):
+    def __setattr__(self, key: str, value: Any):
         try:
             # Throws exception if not in prototype chain
             object.__getattribute__(self, key)
@@ -65,7 +66,7 @@ class ShapeGuard(object):
         else:
             object.__setattr__(self, key, value)
 
-    def __delattr__(self, item):
+    def __delattr__(self, item: str):
         try:
             # Throws exception if not in prototype chain
             object.__getattribute__(self, item)

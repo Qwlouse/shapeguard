@@ -14,6 +14,7 @@
 
 """Defines all custom ShapeGuard errors."""
 
+
 class ShapeGuardError(Exception):
     """Baseclass for all custom ShapeGuard errors."""
     pass

@@ -23,17 +23,17 @@ from shapeguard import shape_spec_parser
 
 
 class TreeToSpec(shape_spec_parser.Transformer):
-  start = shape_spec.ShapeSpec
-  wildcard = dim_specs.Wildcard.make
-  ellipsis = dim_specs.EllipsisDim.make
-  dynamic = dim_specs.Dynamic.make
-  name = dim_specs.NamedDim.make
-  dynamic_name = dim_specs.DynamicNamedDim.make
-  number = dim_specs.Number.make
-  add = dim_specs.AddDims.make
-  sub = dim_specs.SubDims.make
-  mul = dim_specs.MulDims.make
-  div = dim_specs.DivDims.make
+    start = shape_spec.ShapeSpec
+    wildcard = dim_specs.Wildcard.make
+    ellipsis = dim_specs.EllipsisDim.make
+    dynamic = dim_specs.Dynamic.make
+    name = dim_specs.NamedDim.make
+    dynamic_name = dim_specs.DynamicNamedDim.make
+    number = dim_specs.Number.make
+    add = dim_specs.AddDims.make
+    sub = dim_specs.SubDims.make
+    mul = dim_specs.MulDims.make
+    div = dim_specs.DivDims.make
 
 
 parser = shape_spec_parser.Lark_StandAlone(transformer=TreeToSpec())

@@ -35,6 +35,8 @@
 #
 #
 
+# type: ignore
+
 class LarkError(Exception):
     pass
 
