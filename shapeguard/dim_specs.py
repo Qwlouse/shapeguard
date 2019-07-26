@@ -242,7 +242,7 @@ class OpSpec(DimSpec):
     left_op = None
     right_op = None
 
-    def __init__(self, left, _, right):
+    def __init__(self, left, right):
         super(OpSpec, self).__init__()
         self.left = left
         self.right = right
