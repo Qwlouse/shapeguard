@@ -19,10 +19,6 @@ is also read by the setup.py, and during installation the shapeguard module
 cannot yet be imported.
 """
 
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-
 __all__ = ('__version__', '__author__', '__author_email__')
 
 __version__ = '0.1'
@@ -30,4 +26,4 @@ __version__ = '0.1'
 __author__ = 'Klaus Greff'
 __author_email__ = 'klaus.greff@startmail.com'
 
-__url__ = 'https://github.com/Qwlouse/shape-guard'
+__url__ = 'https://github.com/Qwlouse/shapeguard'

@@ -14,9 +14,6 @@
 
 """This python module contains ShapeGuard."""
 
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
 from shapeguard.exception import ShapeError
 from shapeguard.__about__ import __version__
 from shapeguard.__about__ import __author__

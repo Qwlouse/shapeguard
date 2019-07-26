@@ -14,68 +14,65 @@
 
 """Contains the main ShapeGuard class."""
 
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-
 from copy import copy
+
 from shapeguard import tools
 
 
 class ShapeGuard(object):
 
-  def __init__(self, dims=None):
-    object.__setattr__(self, 'dims', {} if dims is None else dims)
+    def __init__(self, dims=None):
+        object.__setattr__(self, 'dims', {} if dims is None else dims)
 
-  def matches(self, tensor, template):
-    return tools.matches(tensor, template, self.dims)
+    def matches(self, tensor, template):
+        return tools.matches(tensor, template, self.dims)
 
-  def guard(self, tensor, template):
-    inferred_dims = tools.guard(tensor, template, self.dims)
-    self.dims.update(inferred_dims)
-    return tensor
+    def guard(self, tensor, template):
+        inferred_dims = tools.guard(tensor, template, self.dims)
+        self.dims.update(inferred_dims)
+        return tensor
 
-  def reshape(self, tensor, template):
-    return tools.reshape(tensor, template, self.dims)
+    def reshape(self, tensor, template):
+        return tools.reshape(tensor, template, self.dims)
 
-  def evaluate(self, template, **kwargs):
-    local_dims = copy(self.dims)
-    local_dims.update(kwargs)
-    return tools.evaluate(template, local_dims)
+    def evaluate(self, template, **kwargs):
+        local_dims = copy(self.dims)
+        local_dims.update(kwargs)
+        return tools.evaluate(template, local_dims)
 
-  def __getitem__(self, item):
-    return tools.evaluate(item, self.dims)
+    def __getitem__(self, item):
+        return tools.evaluate(item, self.dims)
 
-  def __getattr__(self, item):
-    try:
-      # Throws exception if not in prototype chain
-      return object.__getattribute__(self, item)
-    except AttributeError:
-      try:
-        return self.dims[item]
-      except KeyError:
-        raise AttributeError(item)
+    def __getattr__(self, item):
+        try:
+            # Throws exception if not in prototype chain
+            return object.__getattribute__(self, item)
+        except AttributeError:
+            try:
+                return self.dims[item]
+            except KeyError:
+                raise AttributeError(item)
 
-  def __setattr__(self, key, value):
-    try:
-      # Throws exception if not in prototype chain
-      object.__getattribute__(self, key)
-    except AttributeError:
-      try:
-        self.dims[key] = value
-      except KeyError:
-        raise AttributeError(key)
-    else:
-      object.__setattr__(self, key, value)
+    def __setattr__(self, key, value):
+        try:
+            # Throws exception if not in prototype chain
+            object.__getattribute__(self, key)
+        except AttributeError:
+            try:
+                self.dims[key] = value
+            except KeyError:
+                raise AttributeError(key)
+        else:
+            object.__setattr__(self, key, value)
 
-  def __delattr__(self, item):
-    try:
-      # Throws exception if not in prototype chain
-      object.__getattribute__(self, item)
-    except AttributeError:
-      try:
-        del self.dims[item]
-      except KeyError:
-        raise AttributeError(item)
-    else:
-      object.__delattr__(self, item)
+    def __delattr__(self, item):
+        try:
+            # Throws exception if not in prototype chain
+            object.__getattribute__(self, item)
+        except AttributeError:
+            try:
+                del self.dims[item]
+            except KeyError:
+                raise AttributeError(item)
+        else:
+            object.__delattr__(self, item)

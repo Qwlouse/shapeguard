@@ -14,19 +14,14 @@
 
 """Defines all custom ShapeGuard errors."""
 
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-
-
 class ShapeGuardError(Exception):
-  """Baseclass for all custom ShapeGuard errors."""
-  pass
+    """Baseclass for all custom ShapeGuard errors."""
+    pass
 
 
 class ShapeError(ShapeGuardError):
-  pass
+    pass
 
 
 class UnderspecifiedShapeError(ShapeGuardError):
-  pass
+    pass
