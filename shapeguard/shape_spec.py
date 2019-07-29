@@ -25,34 +25,34 @@ ShapeType = Union[Tuple[int], List[int]]
 
 
 class ShapeSpec:
-
     def __init__(self, entries: EntriesType):
         super().__init__()
-        self.entries = [x for x in entries
-                        if not isinstance(x, shape_spec_parser.Token)]
+        self.entries = [
+            x for x in entries if not isinstance(x, shape_spec_parser.Token)
+        ]
         if dim_specs.ellipsis_dim in self.entries:
             idx = self.entries.index(dim_specs.ellipsis_dim)
             self.left_entries = self.entries[:idx]
-            self.right_entries = self.entries[idx + 1:]
+            self.right_entries = self.entries[idx + 1 :]
             self.has_ellipsis = True
         else:
             self.left_entries = self.entries
             self.right_entries = []
             self.has_ellipsis = False
 
-    def evaluate(self,
-                 known_dims: Dict[str, int] = None) -> List[Optional[int]]:
+    def evaluate(self, known_dims: Dict[str, int] = None) -> List[Optional[int]]:
         known_dims = known_dims or {}
 
         if self.has_ellipsis:
             raise exception.UnderspecifiedShapeError(
-                "Template with an ellipsis (...) cannot be fully evaluated.")
+                "Template with an ellipsis (...) cannot be fully evaluated."
+            )
         else:
             return [x.evaluate(known_dims) for x in self.entries]
 
-    def partial_evaluate(self,
-                         known_dims: Dict[str, int] = None
-                         ) -> List[Union[int, str, None]]:
+    def partial_evaluate(
+        self, known_dims: Dict[str, int] = None
+    ) -> List[Union[int, str, None]]:
         known_dims = known_dims or {}
         eval_shape: List[Union[int, str, None]] = []
         for x in self.entries:
@@ -74,8 +74,9 @@ class ShapeSpec:
     def matches(self, shape, known_dims: Dict[str, int] = None) -> bool:
         known_dims = known_dims or {}
         rank_matches = self.rank_matches(shape)
-        conflicts = any([x.has_conflict(s, known_dims)
-                         for s, x in self.zip_iter(shape)])
+        conflicts = any(
+            [x.has_conflict(s, known_dims) for s, x in self.zip_iter(shape)]
+        )
 
         return rank_matches and not conflicts
 
@@ -83,17 +84,16 @@ class ShapeSpec:
         for s, e in zip(shape, self.left_entries):
             yield s, e
         if self.right_entries:
-            for s, e in zip(shape[-len(self.right_entries):],
-                            self.right_entries):
+            for s, e in zip(shape[-len(self.right_entries) :], self.right_entries):
                 yield s, e
 
-    def infer(self,
-              shape: ShapeType,
-              known_dims: Dict[str, int] = None) -> Dict[str, int]:
+    def infer(
+        self, shape: ShapeType, known_dims: Dict[str, int] = None
+    ) -> Dict[str, int]:
         current_known = {}
         if known_dims:
             current_known.update(known_dims)
-        inferred = {'Start': True}
+        inferred = {"Start": True}
         while inferred:
             inferred = {}
             for s, x in self.zip_iter(shape):

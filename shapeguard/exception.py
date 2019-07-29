@@ -17,6 +17,7 @@
 
 class ShapeGuardError(Exception):
     """Baseclass for all custom ShapeGuard errors."""
+
     pass
 
 

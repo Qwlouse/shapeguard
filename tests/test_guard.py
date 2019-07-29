@@ -30,21 +30,21 @@ def test_guard_infers_dimensions():
     sg = ShapeGuard()
     a = tf.ones([1, 2, 3])
     sg.guard(a, "A, B, C")
-    assert sg.dims == {'A': 1, 'B': 2, 'C': 3}
+    assert sg.dims == {"A": 1, "B": 2, "C": 3}
 
 
 def test_guard_infers_dimensions_complex():
     sg = ShapeGuard()
     a = tf.ones([1, 2, 3])
     sg.guard(a, "A, B*2, A+C")
-    assert sg.dims == {'A': 1, 'B': 1, 'C': 2}
+    assert sg.dims == {"A": 1, "B": 1, "C": 2}
 
 
 def test_guard_infers_dimensions_operator_priority():
     sg = ShapeGuard()
     a = tf.ones([1, 2, 8])
     sg.guard(a, "A, B, A+C*2+1")
-    assert sg.dims == {'A': 1, 'B': 2, 'C': 3}
+    assert sg.dims == {"A": 1, "B": 2, "C": 3}
 
 
 def test_guard_raises_complex():
@@ -102,4 +102,4 @@ def test_guard_ellipsis_infer_dims():
     sg = ShapeGuard()
     a = tf.ones([1, 2, 3, 4, 5])
     sg.guard(a, "A, B, ..., C")
-    assert sg.dims == {'A': 1, 'B': 2, 'C': 5}
+    assert sg.dims == {"A": 1, "B": 2, "C": 5}

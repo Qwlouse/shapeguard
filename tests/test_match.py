@@ -35,7 +35,7 @@ def test_matches_ignores_spaces():
 
 
 def test_matches_named_dims():
-    sg = ShapeGuard(dims={'N': 24, 'Z': 16})
+    sg = ShapeGuard(dims={"N": 24, "Z": 16})
     z = tf.ones([24, 16])
     assert sg.matches(z, "N, Z")
     assert sg.matches(z, "24, Z")

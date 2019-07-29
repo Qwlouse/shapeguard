@@ -21,9 +21,8 @@ from shapeguard import tools
 
 
 class ShapeGuard:
-
     def __init__(self, dims: Optional[Dict[str, int]] = None):
-        object.__setattr__(self, 'dims', {} if dims is None else dims)
+        object.__setattr__(self, "dims", {} if dims is None else dims)
 
     def matches(self, tensor, template: str) -> bool:
         return tools.matches(tensor, template, self.dims)

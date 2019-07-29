@@ -1,0 +1,34 @@
+[tool.poetry]
+name = "shapeguard"
+version = "0.1.0"
+description = "ShapeGuard is a tool to help with handling shapes in Tensorflow."
+authors = ["Klaus Greff <klaus.greff@startmail.com>"]
+license = "Apache-2.0"
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "Natural Language :: English",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3.5",
+    "Programming Language :: Python :: 3.6",
+    "Programming Language :: Python :: 3.7",
+    "Topic :: Utilities",
+    "Topic :: Scientific/Engineering",
+]
+readme = "README.md"
+repository = "https://github.com/Qwlouse/shapeguard"
+
+[tool.poetry.dependencies]
+python = "^3.6"
+tensorflow = "^1.14"
+numpy = "^1.17"
+tensorflow-probability = "^0.7.0"
+
+[tool.poetry.dev-dependencies]
+lark-parser = "^0.7.1"
+black = "^19.3b0"
+pytest = "^5.0"
+
+[build-system]
+requires = ["poetry>=0.12"]
+build-backend = "poetry.masonry.api"

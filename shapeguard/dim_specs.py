@@ -49,9 +49,9 @@ class DimSpec:
     def __init__(self, *args):
         super(DimSpec, self).__init__()
 
-    def has_conflict(self,
-                     shape_entry: Optional[int],
-                     known_dims: Dict[str, int]) -> bool:
+    def has_conflict(
+        self, shape_entry: Optional[int], known_dims: Dict[str, int]
+    ) -> bool:
         """Determines if this dim spec has a conflict with a given shape_entry.
 
         If there is not enough knowledge to decide, this function will assume
@@ -81,9 +81,9 @@ class DimSpec:
         """
         raise NotImplementedError
 
-    def infer(self,
-              shape_entry: Optional[int],
-              known_dims: Dict[str, int]) -> Dict[str, int]:
+    def infer(
+        self, shape_entry: Optional[int], known_dims: Dict[str, int]
+    ) -> Dict[str, int]:
         """Try to infer named-dimension sizes from the given shape_entry.
 
         Args:
@@ -100,7 +100,7 @@ class DimSpec:
         yield self
 
     def __repr__(self) -> str:
-        return '<DimSpec>'
+        return "<DimSpec>"
 
     def __eq__(self, other) -> bool:
         return isinstance(other, DimSpec)
@@ -117,17 +117,16 @@ class EllipsisDim(DimSpec):
             cls.instance = cls()
         return cls.instance
 
-    def has_conflict(self,
-                     shape_entry: Optional[int],
-                     known_dims: Dict[str, int]) -> bool:
-        raise RuntimeError('Should never be called.')
+    def has_conflict(
+        self, shape_entry: Optional[int], known_dims: Dict[str, int]
+    ) -> bool:
+        raise RuntimeError("Should never be called.")
 
     def __repr__(self) -> str:
-        return '...'
+        return "..."
 
     def evaluate(self, known_dims: Dict[str, int]) -> Optional[int]:
-        raise exception.UnderspecifiedShapeError(
-            'EllipsisDim cannot be evaluated.')
+        raise exception.UnderspecifiedShapeError("EllipsisDim cannot be evaluated.")
 
     def __eq__(self, other) -> bool:
         return isinstance(other, EllipsisDim)
@@ -139,16 +138,16 @@ ellipsis_dim = EllipsisDim.make()
 class Wildcard(DimSpec):
     """Represents a dimension with any size."""
 
-    def has_conflict(self,
-                     shape_entry: Optional[int],
-                     known_dims: Dict[str, int]) -> bool:
+    def has_conflict(
+        self, shape_entry: Optional[int], known_dims: Dict[str, int]
+    ) -> bool:
         return False  # by definition never has a conflict
 
     def evaluate(self, known_dims) -> Optional[int]:
         return -1
 
     def __repr__(self) -> str:
-        return '*'
+        return "*"
 
     def __eq__(self, other) -> bool:
         return isinstance(other, Wildcard)
@@ -161,9 +160,9 @@ class Number(DimSpec):
         super(Number, self).__init__()
         self.value = int(value)
 
-    def has_conflict(self,
-                     shape_entry: Optional[int],
-                     known_dims: Dict[str, int]) -> bool:
+    def has_conflict(
+        self, shape_entry: Optional[int], known_dims: Dict[str, int]
+    ) -> bool:
         if shape_entry is None:
             return True
         else:
@@ -173,7 +172,7 @@ class Number(DimSpec):
         return self.value
 
     def __repr__(self) -> str:
-        return '{}'.format(self.value)
+        return "{}".format(self.value)
 
     def __eq__(self, other) -> bool:
         if not isinstance(other, Number):
@@ -185,16 +184,16 @@ class Number(DimSpec):
 class Dynamic(DimSpec):
     """Represents a dynamic dimension (i.e. None entry in shape)."""
 
-    def has_conflict(self,
-                     shape_entry: Optional[int],
-                     known_dims: Dict[str, int]) -> bool:
+    def has_conflict(
+        self, shape_entry: Optional[int], known_dims: Dict[str, int]
+    ) -> bool:
         return shape_entry is not None  # only matches None dimensions
 
     def evaluate(self, known_dims: Dict[str, int]) -> Optional[int]:
         return None
 
     def __repr__(self):
-        return 'None'
+        return "None"
 
     def __eq__(self, other):
         return isinstance(other, Dynamic)
@@ -207,9 +206,9 @@ class NamedDim(DimSpec):
         super(NamedDim, self).__init__()
         self.name = str(name)
 
-    def has_conflict(self,
-                     shape_entry: Optional[int],
-                     known_dims: Dict[str, int]) -> bool:
+    def has_conflict(
+        self, shape_entry: Optional[int], known_dims: Dict[str, int]
+    ) -> bool:
         if shape_entry is None:
             return True
         elif self.name not in known_dims:
@@ -221,12 +220,12 @@ class NamedDim(DimSpec):
         if self.name in known_dims:
             return known_dims[self.name]
         raise exception.UnderspecifiedShapeError(
-            'Unknown dimension "{}"\nKnown dimensions: {}'.format(self.name,
-                                                                  known_dims))
+            'Unknown dimension "{}"\nKnown dimensions: {}'.format(self.name, known_dims)
+        )
 
-    def infer(self,
-              shape_entry: Optional[int],
-              known_dims: Dict[str, int]) -> Dict[str, int]:
+    def infer(
+        self, shape_entry: Optional[int], known_dims: Dict[str, int]
+    ) -> Dict[str, int]:
         if shape_entry is None or self.name in known_dims:
             return {}
         else:
@@ -248,9 +247,9 @@ class DynamicNamedDim(NamedDim):
     def __init__(self, name, _=None):
         super(DynamicNamedDim, self).__init__(name)
 
-    def has_conflict(self,
-                     shape_entry: Optional[int],
-                     known_dims: Dict[str, int]) -> bool:
+    def has_conflict(
+        self, shape_entry: Optional[int], known_dims: Dict[str, int]
+    ) -> bool:
         if shape_entry is None or self.name not in known_dims:
             return False
         else:
@@ -263,7 +262,7 @@ class DynamicNamedDim(NamedDim):
             return None
 
     def __repr__(self):
-        return self.name + '?'
+        return self.name + "?"
 
     def __eq__(self, other):
         if not isinstance(other, NamedDim):
@@ -275,7 +274,7 @@ class DynamicNamedDim(NamedDim):
 class OpSpec(DimSpec):
     """Baseclass for dimension operations."""
 
-    op_str: str = '#'
+    op_str: str = "#"
     op: BinaryOperator
     left_op: BinaryOperator
     right_op: BinaryOperator
@@ -286,12 +285,11 @@ class OpSpec(DimSpec):
         self.right: DimSpec = right
 
     def evaluate(self, known_dims: Dict[str, int]) -> Optional[int]:
-        return self.op(self.left.evaluate(known_dims),
-                       self.right.evaluate(known_dims))
+        return self.op(self.left.evaluate(known_dims), self.right.evaluate(known_dims))
 
-    def infer(self,
-              shape_entry: Optional[int],
-              known_dims: Dict[str, int]) -> Dict[str, int]:
+    def infer(
+        self, shape_entry: Optional[int], known_dims: Dict[str, int]
+    ) -> Dict[str, int]:
         try:
             left_val = self.left.evaluate(known_dims)
             right_val = self.right_op(shape_entry, left_val)
@@ -306,9 +304,9 @@ class OpSpec(DimSpec):
             pass
         return {}
 
-    def has_conflict(self,
-                     shape_entry: Optional[int],
-                     known_dims: Dict[str, int]) -> bool:
+    def has_conflict(
+        self, shape_entry: Optional[int], known_dims: Dict[str, int]
+    ) -> bool:
         if shape_entry is None:
             return False
         try:
@@ -323,7 +321,7 @@ class OpSpec(DimSpec):
             return self.left == other.left and self.right == other.right
 
     def __repr__(self):
-        return '({} {} {})'.format(self.left, self.op_str, self.right)
+        return "({} {} {})".format(self.left, self.op_str, self.right)
 
     def flat_iter(self):
         if self.op == operator.mul:
@@ -338,7 +336,7 @@ class OpSpec(DimSpec):
 class AddDims(OpSpec):
     """Represents addition of two dimension values."""
 
-    op_str = '+'
+    op_str = "+"
     op = operator.add
     left_op = operator.sub
     right_op = operator.sub
@@ -347,7 +345,7 @@ class AddDims(OpSpec):
 class SubDims(OpSpec):
     """Represents subtraction of two dimension values."""
 
-    op_str = '-'
+    op_str = "-"
     op = operator.sub
     left_op = operator.add
     right_op = operator.sub
@@ -356,7 +354,7 @@ class SubDims(OpSpec):
 class MulDims(OpSpec):
     """Represents product of two dimension values."""
 
-    op_str = '*'
+    op_str = "*"
     op = operator.mul
     left_op = operator.floordiv
     right_op = operator.floordiv
@@ -365,7 +363,7 @@ class MulDims(OpSpec):
 class DivDims(OpSpec):
     """Represents quotient of two dimension values."""
 
-    op_str = '/'
+    op_str = "/"
     op = operator.floordiv
     left_op = operator.mul
     right_op = operator.floordiv

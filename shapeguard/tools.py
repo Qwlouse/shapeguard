@@ -51,12 +51,12 @@ def guard(tensor: Tensor, template: str, dims: Dict[str, int]):
     # compare rank
     if not spec.rank_matches(shape):
         raise exception.ShapeError(
-            'Tensor has the wrong rank ({} != {}).\n'
-            'Expected shape: {} (from template {})\n'
-            '  Actual shape: {}'.format(
-                len(shape), len(spec),
-                spec.partial_evaluate(dims), template,
-                shape))
+            "Tensor has the wrong rank ({} != {}).\n"
+            "Expected shape: {} (from template {})\n"
+            "  Actual shape: {}".format(
+                len(shape), len(spec), spec.partial_evaluate(dims), template, shape
+            )
+        )
     # infer dimensions
     inferred_dims = spec.infer(shape, dims)
     known_dims = copy(dims)
@@ -64,19 +64,16 @@ def guard(tensor: Tensor, template: str, dims: Dict[str, int]):
     # check if dimensions match
     if not spec.matches(shape, known_dims):
         raise exception.ShapeError(
-            'Shape Mismatch\n'
-            'Expected shape: {} (from template {})\n'
-            '  Actual shape: {}'.format(
-                spec.partial_evaluate(dims), template,
-                shape))
+            "Shape Mismatch\n"
+            "Expected shape: {} (from template {})\n"
+            "  Actual shape: {}".format(spec.partial_evaluate(dims), template, shape)
+        )
 
     # return the inferred dims unless they start with '_'
-    return {k: v for k, v in inferred_dims.items()
-            if not k.startswith('_')}
+    return {k: v for k, v in inferred_dims.items() if not k.startswith("_")}
 
 
-def get_shape(tensor_or_shape: Union[Tensor, Tuple[int], List[int]]
-              ) -> List[int]:
+def get_shape(tensor_or_shape: Union[Tensor, Tuple[int], List[int]]) -> List[int]:
     if isinstance(tensor_or_shape, (list, tuple)):
         return list(tensor_or_shape)
     elif isinstance(tensor_or_shape, tf.Tensor):
@@ -86,8 +83,13 @@ def get_shape(tensor_or_shape: Union[Tensor, Tuple[int], List[int]]
     elif isinstance(tensor_or_shape, np.ndarray):
         return list(tensor_or_shape.shape)
     elif isinstance(tensor_or_shape, tfp.distributions.Distribution):
-        return (tensor_or_shape.batch_shape.as_list() +
-                tensor_or_shape.event_shape.as_list())
+        return (
+            tensor_or_shape.batch_shape.as_list()
+            + tensor_or_shape.event_shape.as_list()
+        )
     else:
-        raise TypeError('Unknown tensor/shape {} of type: {}'
-                        .format(tensor_or_shape, type(tensor_or_shape)))
+        raise TypeError(
+            "Unknown tensor/shape {} of type: {}".format(
+                tensor_or_shape, type(tensor_or_shape)
+            )
+        )
