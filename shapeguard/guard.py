@@ -15,7 +15,7 @@
 """Contains the main ShapeGuard class."""
 
 from copy import copy
-from typing import Optional, Dict, Any
+from typing import Optional, Dict, Any, List
 
 from shapeguard import tools
 
@@ -35,12 +35,12 @@ class ShapeGuard:
     def reshape(self, tensor, template: str):
         return tools.reshape(tensor, template, self.dims)
 
-    def evaluate(self, template: str, **kwargs) -> Optional[int]:
+    def evaluate(self, template: str, **kwargs) -> List[Optional[int]]:
         local_dims = copy(self.dims)
         local_dims.update(kwargs)
         return tools.evaluate(template, local_dims)
 
-    def __getitem__(self, item: str) -> Optional[int]:
+    def __getitem__(self, item: str) -> List[Optional[int]]:
         return tools.evaluate(item, self.dims)
 
     def __getattr__(self, item: str) -> Any:

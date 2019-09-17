@@ -40,7 +40,7 @@ def reshape(tensor: Tensor, template: str, dims: Dict[str, int]) -> Tensor:
     return tf.reshape(tensor, new_shape)
 
 
-def evaluate(template: str, dims: Dict[str, int]) -> Optional[int]:
+def evaluate(template: str, dims: Dict[str, int]) -> List[Optional[int]]:
     dim_spec = parser.parse(template)
     return dim_spec.evaluate(dims)
 
